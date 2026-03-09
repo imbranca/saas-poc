@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Enums\ProjectStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -26,7 +27,14 @@ class Project extends Model
     'created_at',
     'updated_at',
     'deleted_at',
+    'created_by'
   ];
+
+  protected function casts(): array {
+    return [
+      'status'=> ProjectStatus::class
+    ];
+  }
 
   public function createdBy(): BelongsTo
   {
