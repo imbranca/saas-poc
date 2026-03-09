@@ -11,7 +11,13 @@ class AuthController extends Controller
 {
     //
   public function login(Request $request){
-    //TODO: add validations
+    if (!Auth::attempt($request->only('email', 'password'))) {
+      return response([
+        'message' => 'invalid credenctials',
+        'success' => false,
+      ], Response::HTTP_UNAUTHORIZED);
+    }
+
     Auth::attempt($request->only('email', 'password'));
     $user = Auth::user();
     $user->tokens()->delete();
@@ -24,6 +30,12 @@ class AuthController extends Controller
   }
 
   public function logout(Request $request){
+    if(!Auth::user()){
+       return response([
+        'message' => 'invalid credenctials',
+        'success' => false,
+      ], Response::HTTP_UNAUTHORIZED);
+    }
    $request->user()->currentAccessToken()->delete();
     return response()->json
     ([
@@ -33,7 +45,15 @@ class AuthController extends Controller
   }
 
   public function profile(){
+    //
     $user = Auth::user();
+    if(!$user){
+       return response([
+        'message' => 'invalid credenctials',
+        'success' => false,
+      ], Response::HTTP_UNAUTHORIZED);
+    }
+
     return response([
       'data'=>$user,
       'message'=>'user information'
