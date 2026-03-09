@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Enums\ProjectStatus;
+use App\Http\Requests\StoreProjectRequest;
+use App\Http\Requests\UpdateProjectRequest;
 use App\Models\Project;
 use Auth;
 use Exception;
@@ -57,18 +59,19 @@ class ProjectController extends Controller
     }
   }
 
-  public function create(Request $request): JsonResponse{
+  public function create(StoreProjectRequest $request): JsonResponse{
     try {
       if (!$request->user()->can('create', Project::class)) {
         return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
       }
 
       //Validate body
-      $validated = $request->validate([
-        'name' => ['required'],
-        'description' => [''],
-        'status' => ['required', 'string', Rule::enum(ProjectStatus::class)],
-      ]);
+      // $validated = $request->validate([
+      //   'name' => ['required'],
+      //   'description' => [''],
+      //   'status' => ['required', 'string', Rule::enum(ProjectStatus::class)],
+      // ]);
+      $validated = $request->validated();
 
       $project = Project::create([
         ...$validated,
@@ -91,19 +94,13 @@ class ProjectController extends Controller
     }
   }
 
-  public function update(int $id, Request $request){
+  public function update(int $id, UpdateProjectRequest $request){
     try {
 
       if (!$request->user()->can('update', Project::class)) {
         return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
       }
-      //Validate body
-      $validated = $request->validate([
-        'name' => ['required'],
-        'description' => [''],
-        'status' => ['required', 'string', Rule::enum(ProjectStatus::class)],
-      ]);
-
+      $validated = $request->validated();
       $project = Project::findOrFail($id);
       $project->name = $request->name;
       $project->description = $request->description;
@@ -188,7 +185,6 @@ class ProjectController extends Controller
       }
 
       $project = Project::findOrFail($id);
-      //TODO: Status of restored project
       $project->status = ProjectStatus::ACTIVE;
       $project->save();
 
