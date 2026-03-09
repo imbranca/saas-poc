@@ -6,6 +6,9 @@ use App\Enums\ProjectStatus;
 use App\Models\Project;
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProjectController extends Controller
@@ -13,21 +16,44 @@ class ProjectController extends Controller
     //
   public function getAll (){
 
+
   }
 
   public function show ($id){
     return $id;
   }
 
-  public function create(Request $request){
+  public function create(Request $request): JsonResponse{
     if (!$request->user()->can('create', Project::class)) {
       return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
     }
+    try {
+      //Validate body
+      $validated = $request->validate([
+        'name' => ['required'],
+        'description' => [''],
+        'status' => ['required', 'string', Rule::enum(ProjectStatus::class)],
+      ]);
 
-    return response([
-      'data'=>'created',
-      'message'=>'created'
-    ], Response::HTTP_OK);
+      $project = Project::create([
+        ...$validated,
+        'created_by' => $request->user()->id
+      ]);
+
+      $project->save();
+
+      return response()->json([
+        'data' =>  $project,
+        'message' => 'created'
+      ], Response::HTTP_OK);
+
+    } catch (ValidationException $e) {
+      return response()->json([
+        'data' => '',
+        'message' => 'Validation failed',
+        'errors' => $e->errors(),
+      ], Response::HTTP_BAD_REQUEST);
+    }
   }
 
   public function update(int $id, Request $request){
@@ -35,10 +61,38 @@ class ProjectController extends Controller
       return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
     }
 
-    return response([
-      'data'=>'created',
-      'message'=>'project updated'
-    ], Response::HTTP_OK);
+    try {
+      //Validate body
+      $validated = $request->validate([
+        'name' => ['required'],
+        'description' => [''],
+        'status' => ['required', 'string', Rule::enum(ProjectStatus::class)],
+      ]);
+
+      $project = Project::findOrFail($id);
+      $project->name = $request->name;
+      $project->description = $request->description;
+      $project->status = $request->status;
+      // $project = Project::create([
+      //   ...$validated,
+      //   'created_by' => $request->user()->id
+      // ]);
+
+      $project->save();
+
+      return response()->json([
+        'data' => $project,
+        'message' => 'updated'
+      ], Response::HTTP_OK);
+
+    } catch (ValidationException $e) {
+      return response()->json([
+        'data' => '',
+        'message' => 'Validation failed',
+        'errors' => $e->errors(),
+      ], Response::HTTP_BAD_REQUEST);
+    }
+
   }
 
     public function activate(int $id, Request $request){
