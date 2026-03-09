@@ -13,6 +13,9 @@ Route::get('/test', function(Request $request){
   return 'OK';
 });
 
+Route::get('/projects', [ProjectController::class, 'getAll'])
+->middleware('auth:sanctum');
+
 Route::get('/projects/{id}', [ProjectController::class, 'show']);
 
 Route::post('/projects', [ProjectController::class, 'create'])
