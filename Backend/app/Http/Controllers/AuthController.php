@@ -22,7 +22,12 @@ class AuthController extends Controller
     $user = Auth::user();
     $user->tokens()->delete();
     $token = $user->createToken('token')->plainTextToken;
-    $cookie = cookie('jwt', $token, 60*24);
+    $cookie = cookie('jwt', $token,
+    60*24,
+    '/',
+    'localhost',
+    false,
+    true);
     return response([
       'data'=> $user,
       "message"=>'login'
