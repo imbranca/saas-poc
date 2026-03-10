@@ -11,13 +11,10 @@ class AuthenticateWithCookie
     public function handle(Request $request, Closure $next)
     {
       $token = $request->cookie('jwt');
-      // if(!$token){
-      //     return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
-      // }
 
       if ($token) {
-        $request->headers->set('Authorization', 'Bearer ' . $token);
-      }
+        $request->headers->set('Authorization', 'Bearer '.$token);
+     }
       return $next($request);
     }
 }
