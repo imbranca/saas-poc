@@ -19,11 +19,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Projects
     Route::prefix('projects')->group(function () {
         Route::get('/',          [ProjectController::class, 'getAll']);
-        Route::get('/{id}',      [ProjectController::class, 'show']);
+        Route::get('/{id}',      [ProjectController::class, 'show'])->where('id', '[0-9]+');
         Route::post('/',         [ProjectController::class, 'create']);
-        Route::put('/{id}',      [ProjectController::class, 'update']);
-        Route::patch('/{id}/activate', [ProjectController::class, 'activate']);
-        Route::patch('/{id}/archive',  [ProjectController::class, 'archive']);
-        Route::patch('/{id}/restore',  [ProjectController::class, 'restore']);
+        Route::put('/{id}',      [ProjectController::class, 'update'])->where('id', '[0-9]+');
+        Route::patch('/{id}/activate', [ProjectController::class, 'activate'])->where('id', '[0-9]+');
+        Route::patch('/{id}/archive',  [ProjectController::class, 'archive'])->where('id', '[0-9]+');
+        Route::patch('/{id}/restore',  [ProjectController::class, 'restore'])->where('id', '[0-9]+');
     });
 });
