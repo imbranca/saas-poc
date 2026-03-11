@@ -22,20 +22,12 @@ class ProjectController extends Controller
     //
   public function getAll()
   {
-    try {
-      $projects = Project::orderBy('created_at', 'desc')->get();
+    $projects = Project::orderBy('created_at', 'desc')->get();
 
-      return response()->json([
-        'data' => $projects,
-        'message' => 'success'
-      ], Response::HTTP_OK);
-    } catch (Exception $ex) {
-      return response()->json([
-        'data' => '',
-        'message' => 'Failed',
-        'errors' => $ex,
-      ], Response::HTTP_BAD_REQUEST);
-    }
+    return response()->json([
+      'data' => $projects,
+      'message' => 'success'
+    ], Response::HTTP_OK);
   }
 
   public function show (int $id){

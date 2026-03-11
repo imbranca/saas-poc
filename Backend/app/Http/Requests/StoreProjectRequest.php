@@ -29,7 +29,7 @@ class StoreProjectRequest extends FormRequest
         return [
             //
             'name'=>'required|string',
-            'description'=>'string',
+            'description'=>['nullable','string'],
             'status'=>['required','string',Rule::enum(ProjectStatus::class)]
         ];
     }

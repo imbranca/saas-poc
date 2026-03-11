@@ -11,8 +11,8 @@ export default function Profile(){
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }
       }
     );
-    if(res.status !== 200) throw new Error('Failed fetching information');
     const json = await res.json();
+    if(res.status !== 200) throw json;
     return json.data;
   }
 
