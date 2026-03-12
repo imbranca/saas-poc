@@ -22,20 +22,20 @@ class ProjectController extends Controller
     //
   public function getAll()
   {
-    $projects = Project::orderBy('created_at', 'desc')->get();
+    $projects = Project::orderBy('id', 'desc')->get();
 
     return response()->json([
-      'data' => $projects,
+      'data' => ProjectResource::collection($projects),
       'message' => 'success'
     ], Response::HTTP_OK);
   }
 
   public function show (int $id){
     try{
-      $project = Project::findOrFail($id)->toResource(ProjectResource::class);
+      $project = Project::findOrFail($id);
 
       return response()->json([
-      'data' => $project,
+      'data' => new ProjectResource($project),
       'message' => 'success'
     ], Response::HTTP_OK);
     }
@@ -70,7 +70,7 @@ class ProjectController extends Controller
     ], Response::HTTP_OK);
   }
 
-  public function update(int $id, UpdateProjectRequest $request){
+  public function update(int $id, UpdateProjectRequest $request) {
       $this->authorize('update', Project::class);
       $validated = $request->validated();
       $project = Project::findOrFail($id);
@@ -80,7 +80,7 @@ class ProjectController extends Controller
       $project->save();
 
       return response()->json([
-        'data' => $project->toResource(ProjectResource::class),
+        'data' => new ProjectResource($project),
         'message' => 'updated'
       ], Response::HTTP_OK);
   }
@@ -94,7 +94,7 @@ class ProjectController extends Controller
     $project->save();
 
     return response([
-      'data' => $project,
+      'data' => new ProjectResource($project),
       'message' => 'project activated'
     ], Response::HTTP_OK);
   }
@@ -108,7 +108,7 @@ class ProjectController extends Controller
     $project->save();
 
     return response([
-      'data' => $project,
+      'data' => new ProjectResource($project),
       'message' => 'project archived'
     ], Response::HTTP_OK);
   }
@@ -122,7 +122,7 @@ class ProjectController extends Controller
     $project->save();
 
     return response([
-      'data' => $project,
+      'data' =>new ProjectResource($project),
       'message' => 'project restored'
     ], Response::HTTP_OK);
   }

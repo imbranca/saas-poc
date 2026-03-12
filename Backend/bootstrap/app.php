@@ -44,8 +44,8 @@ return Application::configure(basePath: dirname(__DIR__))
       $exceptions->render(function (Exception $e) {
         return response()->json([
           'message' => 'An unexpected error occurred',
-          'errors' => $e->getMessage(),
-        ], 500);
+          'errors' =>  config('app.debug') ? $e->getMessage() : null,
+        ], Response::HTTP_INTERNAL_SERVER_ERROR);
       });
 
   })->create();
