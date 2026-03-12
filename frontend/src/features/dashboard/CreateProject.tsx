@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import type { Project, ProjectStatus } from "../../types/ProjectType";
+import { STATUS, type Project, type ProjectStatus } from "../../types/ProjectType";
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import type { ResponseData } from "../../types/ResponseData";
@@ -18,7 +18,7 @@ export default function Project(){
     defaultValues: {
       name: '',
       description: '',
-      status: 'draft',
+      status: STATUS.Draft,
     }
   });
 
@@ -70,7 +70,7 @@ export default function Project(){
           </div>
           <div className="formGroup flex flex-col mt-4">
             <label className="text-left mb-1 font-semibold">Description</label>
-            <textarea placeholder="Password" className="p-1 rounded-md text-sm border-black px-2"
+            <textarea placeholder="description" className="p-1 rounded-md text-sm border-black px-2"
               {
               ...register("description")
               } />
@@ -80,9 +80,9 @@ export default function Project(){
             <select className="border-black rounded-md text-sm p-1" {
                 ...register("status", { required: "Status is required" })
                }>
-              <option value="draft">Draft</option>
-              <option value="active">Active</option>
-              <option value="archived">Archived</option>
+              <option value={STATUS.Draft}>Draft</option>
+              <option value={STATUS.Active}>Active</option>
+              <option value={STATUS.Archived}>Archived</option>
             </select>
             { errors.status && (
                 <div className="text-red-500 text-sm mt-1">{errors.status.message}</div>

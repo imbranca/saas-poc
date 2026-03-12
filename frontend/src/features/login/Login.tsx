@@ -67,7 +67,7 @@ export default function Login(){
               )}
             </div>
             <div className="formGroup mt-2">
-              <input type="text" placeholder="Password" className="rounded-md text-sm border-black px-2"
+              <input type="password" placeholder="Password" className="rounded-md text-sm border-black px-2"
                 {
                 ...register("password", { required: 'Please enter your password' })
                 } />
