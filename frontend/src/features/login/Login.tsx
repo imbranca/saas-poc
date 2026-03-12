@@ -1,9 +1,10 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { useCookies } from "react-cookie";
 import { useAuth } from "../../Context/AuthContext";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 type Credentials = {
   email: string;
@@ -12,12 +13,19 @@ type Credentials = {
 
 export default function Login(){
   const { setUser } = useAuth();
-   const navigate = useNavigate();
-  const { register, watch, handleSubmit, formState: { errors } } = useForm<Credentials>({
+  const navigate = useNavigate();
+
+  const loginSchema = z.object({
+    email: z.email('Enter a valid email'),
+    password: z.string().min(5, 'Minimum lenght 5 characters')
+  })
+
+  const { register, watch, handleSubmit,control, formState: { errors } } = useForm<Credentials>({
     defaultValues: {
-      email: "manager@example.com",
+      email: "",
       password: "Password#123"
-    }
+    },
+    resolver: zodResolver(loginSchema)
   });
 
   const loginMutation = useMutation({
@@ -55,12 +63,7 @@ export default function Login(){
             <div className="formGroup">
               <input type="text" placeholder="Email" className="rounded-md text-sm border-black px-2"
                 {
-                ...register("email", { required: 'Please enter your email',
-                        pattern: {
-                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                          message: "Enter a valid email"
-                        }
-                 },)
+                ...register("email")
                 } />
               { errors.email && (
                 <div className="text-red-500 text-sm mt-1">{errors.email.message}</div>
@@ -69,13 +72,13 @@ export default function Login(){
             <div className="formGroup mt-2">
               <input type="password" placeholder="Password" className="rounded-md text-sm border-black px-2"
                 {
-                ...register("password", { required: 'Please enter your password' })
+                ...register("password")
                 } />
-              {errors.password && (
-                <div className="text-red-500 text-sm mt-1">
-                  {errors.password.message}
-                </div>
-              )}
+                {errors.password && (
+                  <div className="text-red-500 text-sm mt-1">
+                    {errors.password.message}
+                  </div>
+                )}
             </div>
             <button type="submit" className="px-2 mt-3 color-white border-black rounded-md text-sm cursor-point">Submit</button>
           </form>
