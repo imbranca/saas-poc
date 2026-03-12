@@ -4,6 +4,10 @@ import { STATUS, type Project, type ProjectStatus } from "../../types/ProjectTyp
 import { useForm } from "react-hook-form";
 import { useEffect } from "react";
 import type { ResponseData } from "../../types/ResponseData";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { projectSchema } from "../../types/ProjectSchema";
+import { capitalize } from "../../lib/utils";
 
 type ProjectForm = {
   name: string;
@@ -14,12 +18,13 @@ type ProjectForm = {
 export default function Project(){
 
   const navigate = useNavigate();
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<ProjectForm>({
+  const { register, handleSubmit, formState: { errors } } = useForm<ProjectForm>({
     defaultValues: {
       name: '',
       description: '',
       status: STATUS.Draft,
-    }
+    },
+    resolver: zodResolver(projectSchema)
   });
 
 
@@ -58,19 +63,17 @@ export default function Project(){
         <form className="max-w-lg mx-auto" onSubmit={handleSubmit(onSubmit)}>
           <div className="formGroup flex flex-col">
             <label className="text-left mb-1 font-semibold">Name</label>
-            <input type="text" placeholder="Email" className="p-1 rounded-md text-sm border-black px-2"
+            <input type="text" placeholder="Name" className="p-1 rounded-md text-sm border-black px-2"
               {
-              ...register("name", {
-                required: 'name required'
-              },)
+              ...register("name")
               } />
                { errors.name && (
-                <div className="text-red-500 text-sm mt-1">{errors.name.message}</div>
+                <div className="text-red-500 text-left text-sm mt-1">{errors.name.message}</div>
               )}
           </div>
           <div className="formGroup flex flex-col mt-4">
             <label className="text-left mb-1 font-semibold">Description</label>
-            <textarea placeholder="description" className="p-1 rounded-md text-sm border-black px-2"
+            <textarea placeholder="Description" className="p-1 rounded-md text-sm border-black px-2"
               {
               ...register("description")
               } />
@@ -78,14 +81,14 @@ export default function Project(){
           <div className="formGroup flex flex-col mt-4">
             <label className="text-left mb-1 font-semibold">Status</label>
             <select className="border-black rounded-md text-sm p-1" {
-                ...register("status", { required: "Status is required" })
+                ...register("status")
                }>
-              <option value={STATUS.Draft}>Draft</option>
-              <option value={STATUS.Active}>Active</option>
-              <option value={STATUS.Archived}>Archived</option>
+              <option value={STATUS.Draft}>{capitalize(STATUS.Draft)}</option>
+              <option value={STATUS.Active}>{capitalize(STATUS.Active)}</option>
+              <option value={STATUS.Archived}>{capitalize(STATUS.Archived)}</option>
             </select>
             { errors.status && (
-                <div className="text-red-500 text-sm mt-1">{errors.status.message}</div>
+                <div className="text-red-500 text-left text-sm mt-1">{errors.status.message}</div>
               )}
           </div>
           <button type="submit" className="px-2 mt-3 color-white border-black rounded-md text-sm cursor-point">Save</button>

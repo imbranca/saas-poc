@@ -18,9 +18,9 @@ export default function Login(){
   const loginSchema = z.object({
     email: z.email('Enter a valid email'),
     password: z.string().min(5, 'Minimum lenght 5 characters')
-  })
+  });
 
-  const { register, watch, handleSubmit,control, formState: { errors } } = useForm<Credentials>({
+  const { register, handleSubmit, formState: { errors } } = useForm<Credentials>({
     defaultValues: {
       email: "",
       password: "Password#123"
@@ -41,7 +41,6 @@ export default function Login(){
       return json;
     },
     onSuccess: (res) => {
-      console.log('Logged in:', res);
       setUser(res.data);
       navigate('/dashboard');
     },
@@ -50,7 +49,7 @@ export default function Login(){
     },
   });
 
-  async function onSubmit(data: any) {
+  async function onSubmit(data: Credentials) {
     const {email, password} = data;
     loginMutation.mutate({ email, password });
   }
