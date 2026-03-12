@@ -87,6 +87,8 @@ export default function EditProject(){
     }
   }, [isError])
 
+  if(isLoading) return <p>Loading ...</p>
+
   if(!project) return (<>
   </>)
 

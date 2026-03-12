@@ -87,6 +87,8 @@ export default function Dashboard(){
     restoreProject(id);
   }
 
+  if(isLoading) return <p>Loading ...</p>
+
   if (isError) return <p className="mt-4">Something went wrong. Please try again.</p>;
 
   return (
